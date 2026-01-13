@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - env.example
+    environment:
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: ./workers
+      target: dev
+    command: npm run dev
+    env_file:
+      - env.example
+    environment:
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./workers:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
