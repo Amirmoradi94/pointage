@@ -1,6 +1,8 @@
 import { CourseType } from "@prisma/client";
 import { z } from "zod";
 import { protectedProcedure, router } from "@/server/api/trpc";
+import { canCreateCourse } from "@/lib/plan-limits";
+import { TRPCError } from "@trpc/server";
 
 export const courseRouter = router({
   list: protectedProcedure
@@ -33,10 +35,31 @@ export const courseRouter = router({
         semester: z.string().optional(),
         year: z.number().int().optional(),
         courseType: z.nativeEnum(CourseType).default(CourseType.GENERAL),
-        organizationId: z.string().min(1),
       }),
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      // Get user's organizationId and id from database
+      const user = await ctx.db.user.findUnique({
+        where: { clerkId: ctx.userId! },
+        select: { id: true, organizationId: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found in database. Please sign out and sign in again.",
+        });
+      }
+
+      // Check plan limits
+      const canCreate = await canCreateCourse(user.id);
+      if (!canCreate.allowed) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: canCreate.reason || "Plan limit reached",
+        });
+      }
+
       return ctx.db.course.create({
         data: {
           name: input.name,
@@ -45,8 +68,8 @@ export const courseRouter = router({
           semester: input.semester,
           year: input.year,
           courseType: input.courseType,
-          organizationId: input.organizationId,
-          createdById: ctx.userId!,
+          organizationId: user.organizationId,
+          createdById: user.id,
         },
       });
     }),

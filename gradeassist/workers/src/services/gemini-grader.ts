@@ -71,6 +71,8 @@ export interface GradingResult {
   flagsForReview: string[];
   modelUsed: string;
   processingTime: number;
+  extractedStudentName?: string;
+  extractedStudentId?: string;
 }
 
 /**
@@ -143,25 +145,33 @@ ${input.courseType ? `- Subject area: ${input.courseType}` : ""}
 
   prompt += `
 **INSTRUCTIONS:**
-1. Compare the student submission images with the solution images page by page.
-2. Identify correct answers, incorrect answers, partially correct work, and missing work.
-3. For each criterion in the rubric (or overall if no rubric), provide:
+1. FIRST, extract student information from the submission:
+   - Look for student name (usually at the top of the first page)
+   - Look for student ID/number (common formats: digits, alphanumeric codes)
+   - If not found on the first page, check subsequent pages
+   - If truly not found, set these fields to null
+2. Compare the student submission images with the solution images page by page.
+3. Identify correct answers, incorrect answers, partially correct work, and missing work.
+4. For each criterion in the rubric (or overall if no rubric), provide:
    - Score earned
    - Justification for the score
    - Specific feedback on what was done well or what needs improvement
-4. Calculate a confidence score (0.0-1.0) based on:
+5. Calculate a confidence score (0.0-1.0) based on:
    - Clarity of student's work (readable handwriting, clear diagrams)
    - Completeness of submission
    - Alignment with solution methodology
    - Any ambiguities or unclear sections
-5. Flag for human review if:
+6. Flag for human review if:
    - Confidence < 0.75
    - Student used a significantly different method than the solution
    - Handwriting is unclear or illegible
    - Answer is borderline between grade brackets
+   - Student name or ID could not be extracted
 
 **OUTPUT FORMAT (respond with valid JSON only):**
 {
+  "extractedStudentName": "<student's full name or null if not found>",
+  "extractedStudentId": "<student ID/number or null if not found>",
   "score": <number between 0 and ${input.maxScore}>,
   "confidence": <number between 0.0 and 1.0>,
   "feedback": "<overall feedback string>",
@@ -221,6 +231,8 @@ function parseGradingResponse(responseText: string): Partial<GradingResult> {
         : [],
       pageAnnotations: Array.isArray(parsed.pageAnnotations) ? parsed.pageAnnotations : [],
       flagsForReview: Array.isArray(parsed.flagsForReview) ? parsed.flagsForReview : [],
+      extractedStudentName: parsed.extractedStudentName || undefined,
+      extractedStudentId: parsed.extractedStudentId || undefined,
     };
   } catch (error) {
     console.error("[grader] Failed to parse response:", error);
@@ -311,6 +323,8 @@ export async function gradeWithGemini(input: GradingInput): Promise<GradingResul
       flagsForReview: flags,
       modelUsed: "gemini-2.0-flash-exp",
       processingTime,
+      extractedStudentName: parsedResult.extractedStudentName,
+      extractedStudentId: parsedResult.extractedStudentId,
     };
   } catch (error) {
     console.error("[grader] Grading failed:", error);

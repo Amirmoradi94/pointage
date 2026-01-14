@@ -162,10 +162,14 @@ const processGrading = async (job: Job<GradingJob>) => {
       },
     });
 
-    // Update submission status
+    // Update submission status and extracted student info
     await prisma.submission.update({
       where: { id: submissionId },
-      data: { status: "GRADED" },
+      data: {
+        status: "GRADED",
+        extractedStudentName: result.extractedStudentName,
+        extractedStudentId: result.extractedStudentId,
+      },
     });
 
     console.log(

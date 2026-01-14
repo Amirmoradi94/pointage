@@ -11,20 +11,53 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { COURSE_TYPES } from "@/lib/constants";
+import { api } from "@/lib/trpc/client";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NewCoursePage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [courseType, setCourseType] = useState("GENERAL");
+
+  const createCourseMutation = api.course.create.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Course created successfully",
+      });
+      router.push("/courses");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create course",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // TODO: Implement tRPC mutation to create course
-    setTimeout(() => {
-      setIsLoading(false);
-      router.push("/courses");
-    }, 1000);
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const code = formData.get("code") as string;
+    const description = formData.get("description") as string;
+    const semester = formData.get("semester") as string;
+    const yearStr = formData.get("year") as string;
+    const year = yearStr ? parseInt(yearStr, 10) : undefined;
+
+    createCourseMutation.mutate({
+      name,
+      code,
+      description: description || undefined,
+      semester: semester || undefined,
+      year,
+      courseType: courseType as any,
+    });
   };
 
   return (
@@ -86,7 +119,7 @@ export default function NewCoursePage() {
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="courseType">Course Type</Label>
-                <Select name="courseType" defaultValue="GENERAL">
+                <Select name="courseType" value={courseType} onValueChange={setCourseType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>

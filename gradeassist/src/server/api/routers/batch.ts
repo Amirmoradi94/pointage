@@ -37,11 +37,21 @@ export const batchRouter = router({
         totalSubmissions: z.number().int().default(0),
       }),
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      // Get user's database ID from clerkId
+      const user = await ctx.db.user.findUnique({
+        where: { clerkId: ctx.userId! },
+        select: { id: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found in database. Please sign out and sign in again.");
+      }
+
       return ctx.db.batch.create({
         data: {
           assignmentId: input.assignmentId,
-          uploadedById: ctx.userId!,
+          uploadedById: user.id,
           totalSubmissions: input.totalSubmissions,
           status: BatchStatus.UPLOADING,
         },

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Application Name:** GradeAssist AI  
+**Application Name:** Pointage  
 **Purpose:** An AI-powered grading assistant for university markers that processes student assignments (PDF, DOCX, images), grades them against provided solutions using Gemini 2.5 vision models, and allows supervisors to review and approve grades.
 
 **Core Principles:**
@@ -991,7 +991,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GradeAssist AI",
+  title: "Pointage",
   description: "AI-powered grading assistant for university markers",
 };
 

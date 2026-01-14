@@ -25,9 +25,9 @@ export function Sidebar() {
       <div className="mb-8">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black text-white">
-            GA
+            P
           </span>
-          <span>GradeAssist AI</span>
+          <span>Pointage</span>
         </Link>
         <p className="mt-2 text-sm text-gray-500">
           AI grading with human-in-the-loop review.

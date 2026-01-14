@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { db } from "@/server/db";
+import { PlanType } from "@prisma/client";
 
 const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 
@@ -13,10 +14,10 @@ export async function POST(req: Request) {
     );
   }
 
-  const headerPayload = await headers();
-  const svixId = headerPayload.get("svix-id");
-  const svixTimestamp = headerPayload.get("svix-timestamp");
-  const svixSignature = headerPayload.get("svix-signature");
+  const headersList = await headers();
+  const svixId = headersList.get("svix-id");
+  const svixTimestamp = headersList.get("svix-timestamp");
+  const svixSignature = headersList.get("svix-signature");
 
   if (!svixId || !svixTimestamp || !svixSignature) {
     return NextResponse.json({ error: "Missing svix headers" }, { status: 400 });
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
         });
       }
 
-      await db.user.create({
+      const user = await db.user.create({
         data: {
           clerkId: id,
           email: primaryEmail?.email_address || "",
@@ -73,7 +74,25 @@ export async function POST(req: Request) {
         },
       });
 
-      console.log("User created in database:", id);
+      // Create free plan subscription (forever)
+      const foreverDate = new Date("2099-12-31");
+
+      await db.subscription.create({
+        data: {
+          userId: user.id,
+          planType: PlanType.FREE,
+          maxCourses: 1,
+          maxStudentsPerCourse: 40,
+          maxAssignmentsPerCourse: 1,
+          maxTeamMembers: 1,
+          hasPrioritySupport: false,
+          pricePerSemester: 0,
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: foreverDate,
+        },
+      });
+
+      console.log("User created in database with free plan:", id);
     } catch (error) {
       console.error("Error creating user:", error);
       return NextResponse.json({ error: "User creation failed" }, { status: 500 });

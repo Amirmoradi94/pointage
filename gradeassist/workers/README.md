@@ -1,4 +1,4 @@
-# GradeAssist Workers
+# Pointage Workers
 
 Background workers for document conversion and AI grading using BullMQ.
 

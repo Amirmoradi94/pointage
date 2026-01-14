@@ -47,7 +47,17 @@ export const gradeRouter = router({
         reviewNotes: z.string().optional(),
       }),
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      // Get user's database ID from clerkId
+      const user = await ctx.db.user.findUnique({
+        where: { clerkId: ctx.userId! },
+        select: { id: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found in database. Please sign out and sign in again.");
+      }
+
       return ctx.db.grade.update({
         where: { id: input.gradeId },
         data: {
@@ -55,7 +65,7 @@ export const gradeRouter = router({
           finalFeedback: input.finalFeedback,
           status: input.status,
           reviewNotes: input.reviewNotes,
-          reviewedById: ctx.userId,
+          reviewedById: user.id,
           reviewedAt: new Date(),
           history: {
             create: {
@@ -65,7 +75,7 @@ export const gradeRouter = router({
                 finalFeedback: input.finalFeedback,
                 status: input.status,
               },
-              userId: ctx.userId,
+              userId: user.id,
             },
           },
         },

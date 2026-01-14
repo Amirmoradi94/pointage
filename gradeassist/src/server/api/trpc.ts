@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 import { db } from "@/server/db";
 
 export const createTRPCContext = async () => {
-  const { userId, orgId } = auth();
+  const { userId, orgId } = await auth();
   return {
     db,
     userId,

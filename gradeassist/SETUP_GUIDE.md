@@ -1,6 +1,6 @@
-# GradeAssist AI - Complete Setup Guide
+# Pointage - Complete Setup Guide
 
-This guide will walk you through setting up GradeAssist AI from scratch.
+This guide will walk you through setting up Pointage from scratch.
 
 ## ✅ Completed Setup
 
@@ -274,6 +274,6 @@ gradeassist/
 
 ## 🎉 You're All Set!
 
-Your GradeAssist AI application is now ready to use. Visit http://localhost:3000 to get started!
+Your Pointage application is now ready to use. Visit http://localhost:3000 to get started!
 
 For questions or issues, check the main README.md or create an issue on GitHub.

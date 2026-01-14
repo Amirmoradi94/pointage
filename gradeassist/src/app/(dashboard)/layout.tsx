@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TRPCProvider } from "@/components/providers/TRPCProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { BatchNotificationListener } from "@/components/notifications/BatchNotificationListener";
 
 export default async function DashboardLayout({
   children,
@@ -25,6 +26,7 @@ export default async function DashboardLayout({
         </div>
       </div>
       <Toaster />
+      <BatchNotificationListener />
     </TRPCProvider>
   );
 }

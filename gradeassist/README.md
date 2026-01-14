@@ -1,4 +1,4 @@
-# GradeAssist AI
+# Pointage
 
 AI-assisted grading with document conversion workers, tRPC API, Clerk auth, Supabase storage, and Pusher realtime updates.
 

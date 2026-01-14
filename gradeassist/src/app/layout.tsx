@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GradeAssist AI",
+  title: "Pointage",
   description: "AI-powered grading assistant for university markers",
 };
 

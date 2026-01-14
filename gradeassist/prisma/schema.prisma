@@ -33,13 +33,14 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdCourses       Course[]              @relation("CourseCreator")
-  createdAssignments   Assignment[]          @relation("AssignmentCreator")
-  uploadedBatches      Batch[]               @relation("BatchUploader")
-  reviewedGrades       Grade[]               @relation("GradeReviewer")
-  uploadedSolutions    Solution[]            @relation("SolutionUploader")
-  gradeHistory         GradeHistory[]
+  organization       Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdCourses     Course[]       @relation("CourseCreator")
+  createdAssignments Assignment[]   @relation("AssignmentCreator")
+  uploadedBatches    Batch[]        @relation("BatchUploader")
+  reviewedGrades     Grade[]        @relation("GradeReviewer")
+  uploadedSolutions  Solution[]     @relation("SolutionUploader")
+  gradeHistory       GradeHistory[]
+  subscription       Subscription?
 }
 
 enum UserRole {
@@ -51,18 +52,18 @@ enum UserRole {
 // ==================== COURSE & ASSIGNMENT ====================
 
 model Course {
-  id             String       @id @default(cuid())
+  id             String     @id @default(cuid())
   name           String
   code           String
   description    String?
   semester       String?
   year           Int?
-  courseType     CourseType   @default(GENERAL)
+  courseType     CourseType @default(GENERAL)
   organizationId String
   createdById    String
-  isArchived     Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  isArchived     Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdBy    User         @relation("CourseCreator", fields: [createdById], references: [id])
@@ -123,7 +124,7 @@ model Rubric {
   description String?
   courseId    String?
   isTemplate  Boolean  @default(false)
-  criteria    Json     // Array of RubricCriterion
+  criteria    Json // Array of RubricCriterion
   totalPoints Float
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -190,18 +191,20 @@ enum BatchStatus {
 }
 
 model Submission {
-  id                String           @id @default(cuid())
-  batchId           String?
-  assignmentId      String
-  studentIdentifier String
-  originalFilename  String
-  originalFileUrl   String
-  mimeType          String?
-  pageCount         Int?
-  status            SubmissionStatus @default(PENDING_UPLOAD)
-  errorMessage      String?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  id                   String           @id @default(cuid())
+  batchId              String?
+  assignmentId         String
+  studentIdentifier    String
+  extractedStudentName String?
+  extractedStudentId   String?
+  originalFilename     String
+  originalFileUrl      String
+  mimeType             String?
+  pageCount            Int?
+  status               SubmissionStatus @default(PENDING_UPLOAD)
+  errorMessage         String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
 
   batch      Batch?           @relation(fields: [batchId], references: [id], onDelete: SetNull)
   assignment Assignment       @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
@@ -241,9 +244,9 @@ model SubmissionPage {
 // ==================== GRADING ====================
 
 model Grade {
-  id                String      @id @default(cuid())
-  submissionId      String      @unique
-  
+  id           String @id @default(cuid())
+  submissionId String @unique
+
   // AI-generated values
   aiScore           Float?
   aiMaxScore        Float?
@@ -252,24 +255,24 @@ model Grade {
   criteriaBreakdown Json?
   pageAnnotations   Json?
   flagsForReview    String[]
-  
+
   // Final values (after review)
-  finalScore        Float?
-  finalFeedback     String?
-  
+  finalScore    Float?
+  finalFeedback String?
+
   // Review metadata
-  status            GradeStatus @default(PENDING_AI)
-  reviewedById      String?
-  reviewedAt        DateTime?
-  reviewNotes       String?
-  
+  status       GradeStatus @default(PENDING_AI)
+  reviewedById String?
+  reviewedAt   DateTime?
+  reviewNotes  String?
+
   // Processing metadata
-  processingTime    Int?
-  workerId          String?
-  modelUsed         String?
-  
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  processingTime Int?
+  workerId       String?
+  modelUsed      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   submission Submission     @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   reviewedBy User?          @relation("GradeReviewer", fields: [reviewedById], references: [id])
@@ -311,4 +314,83 @@ enum GradeHistoryAction {
   MODIFIED
   REJECTED
   REGRADED
+}
+
+// ==================== SUBSCRIPTION & PLANS ====================
+
+enum PlanType {
+  FREE
+  STARTER
+  STANDARD
+  PRO
+  CUSTOM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PAST_DUE
+}
+
+model Subscription {
+  id       String             @id @default(cuid())
+  userId   String             @unique
+  planType PlanType           @default(FREE)
+  status   SubscriptionStatus @default(ACTIVE)
+
+  // Plan limits (for custom plans or overrides)
+  maxCourses              Int? // null = unlimited
+  maxStudentsPerCourse    Int? // null = unlimited
+  maxAssignmentsPerCourse Int? // null = unlimited
+  maxTeamMembers          Int? // null = unlimited
+  hasPrioritySupport      Boolean @default(false)
+
+  // Billing
+  pricePerSemester   Float    @default(0)
+  currentPeriodStart DateTime @default(now())
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean  @default(false)
+
+  // Metadata
+  stripeSubscriptionId String?  @unique
+  stripeCustomerId     String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([planType])
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  planType    PlanType @unique
+  name        String
+  description String?
+
+  // Limits
+  maxCourses              Int? // null = unlimited
+  maxStudentsPerCourse    Int? // null = unlimited
+  maxAssignmentsPerCourse Int? // null = unlimited
+  maxTeamMembers          Int  @default(1)
+
+  // Features
+  hasPrioritySupport     Boolean @default(false)
+  hasAdvancedGrading     Boolean @default(false)
+  hasRubricCustomization Boolean @default(false)
+
+  // Pricing
+  pricePerSemester Float
+  pricePerMonth    Float?
+
+  // Metadata
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([planType])
+  @@index([isActive])
 }

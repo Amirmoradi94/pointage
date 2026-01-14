@@ -91,52 +91,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>API Keys</CardTitle>
-          <CardDescription>
-            Manage your API integration keys
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
-              <div>
-                <p className="text-sm font-medium">Gemini API</p>
-                <p className="text-xs text-gray-500">3 keys configured</p>
-              </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700">
-                Active
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
-              <div>
-                <p className="text-sm font-medium">Pusher</p>
-                <p className="text-xs text-gray-500">Real-time updates configured</p>
-              </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700">
-                Active
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
-              <div>
-                <p className="text-sm font-medium">Redis/Upstash</p>
-                <p className="text-xs text-gray-500">Job queue configured</p>
-              </div>
-              <Badge variant="outline" className="bg-green-50 text-green-700">
-                Active
-              </Badge>
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-500">
-            API keys are managed through environment variables for security
-          </p>
-        </CardContent>
-      </Card>
-
       <Card className="border-red-200">
         <CardHeader>
           <CardTitle className="text-red-900">Danger Zone</CardTitle>
