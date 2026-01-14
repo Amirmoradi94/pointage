@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PlanType } from "@prisma/client";
 
 const plans = [
   {
     name: "Free",
+    planType: PlanType.FREE,
     description: "Free forever - try Pointage",
     monthlyPrice: 0,
     semesterPrice: 0,
@@ -27,6 +29,7 @@ const plans = [
   },
   {
     name: "Starter",
+    planType: PlanType.STARTER,
     description: "Perfect for small tutorials",
     monthlyPrice: 9,
     semesterPrice: 29,
@@ -44,6 +47,7 @@ const plans = [
   },
   {
     name: "Standard",
+    planType: PlanType.STANDARD,
     description: "Most popular for TAs",
     monthlyPrice: 15,
     semesterPrice: 49,
@@ -61,6 +65,7 @@ const plans = [
   },
   {
     name: "Pro",
+    planType: PlanType.PRO,
     description: "For full-time TAs & instructors",
     monthlyPrice: 25,
     semesterPrice: 79,
@@ -78,8 +83,32 @@ const plans = [
   },
 ];
 
-export function PricingCards() {
+const planOrder: Record<PlanType, number> = {
+  [PlanType.FREE]: 0,
+  [PlanType.STARTER]: 1,
+  [PlanType.STANDARD]: 2,
+  [PlanType.PRO]: 3,
+  [PlanType.CUSTOM]: 4,
+};
+
+interface PricingCardsProps {
+  upgradeFrom?: PlanType | null;
+}
+
+export function PricingCards({ upgradeFrom }: PricingCardsProps) {
   const [isAnnual, setIsAnnual] = useState(true);
+
+  const filteredPlans = useMemo(() => {
+    if (!upgradeFrom) {
+      return plans;
+    }
+
+    const currentPlanOrder = planOrder[upgradeFrom] ?? 0;
+    return plans.filter(plan => {
+      const planOrderValue = planOrder[plan.planType];
+      return planOrderValue > currentPlanOrder;
+    });
+  }, [upgradeFrom]);
 
   return (
     <div>
@@ -107,8 +136,8 @@ export function PricingCards() {
       </div>
 
       {/* Cards */}
-      <div className="grid md:grid-cols-3 gap-8">
-        {plans.map((plan, index) => (
+      <div className={`grid gap-8 ${filteredPlans.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : filteredPlans.length === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' : 'md:grid-cols-3'}`}>
+        {filteredPlans.map((plan, index) => (
           <motion.div
             key={plan.name}
             initial={{ opacity: 0, y: 20 }}

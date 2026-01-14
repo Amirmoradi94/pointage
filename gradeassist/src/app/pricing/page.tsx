@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { Footer } from "@/components/landing/Footer";
 import { PricingCards } from "@/components/pricing/PricingCards";
 import { PackageBuilder } from "@/components/pricing/PackageBuilder";
 import { ComparisonTable } from "@/components/pricing/ComparisonTable";
+import { PlanType } from "@prisma/client";
 
 const faqs = [
   {
@@ -38,6 +40,24 @@ const faqs = [
 ];
 
 export default function PricingPage() {
+  const searchParams = useSearchParams();
+  const upgradeFrom = searchParams.get("upgrade") as PlanType | null;
+  
+  const isUpgradePage = !!upgradeFrom;
+  
+  const getUpgradeTitle = () => {
+    switch (upgradeFrom) {
+      case PlanType.FREE:
+        return "Upgrade from Free Plan";
+      case PlanType.STARTER:
+        return "Upgrade from Starter Plan";
+      case PlanType.STANDARD:
+        return "Upgrade from Standard Plan";
+      default:
+        return "Upgrade Your Plan";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-landing-gradient">
       <Navbar />
@@ -51,16 +71,28 @@ export default function PricingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <Link href="/" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6">
+              <Link href={isUpgradePage ? "/dashboard" : "/"} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                {isUpgradePage ? "Back to Dashboard" : "Back to Home"}
               </Link>
               <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
-                Simple, transparent{" "}
-                <span className="text-gradient-brand">pricing</span>
+                {isUpgradePage ? (
+                  <>
+                    {getUpgradeTitle()}
+                    <span className="text-gradient-brand"> - Upgrade Now</span>
+                  </>
+                ) : (
+                  <>
+                    Simple, transparent{" "}
+                    <span className="text-gradient-brand">pricing</span>
+                  </>
+                )}
               </h1>
               <p className="text-lg text-slate-600">
-                Choose a plan that fits your teaching load. All plans include a free trial.
+                {isUpgradePage 
+                  ? "Choose a higher plan to unlock more features and capacity."
+                  : "Choose a plan that fits your teaching load. All plans include a free trial."
+                }
               </p>
             </motion.div>
           </div>
@@ -69,7 +101,7 @@ export default function PricingPage() {
         {/* Pricing Cards */}
         <section className="py-8">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <PricingCards />
+            <PricingCards upgradeFrom={upgradeFrom} />
           </div>
         </section>
 

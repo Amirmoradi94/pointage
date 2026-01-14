@@ -20,7 +20,7 @@ export default async function DashboardLayout({
     <TRPCProvider>
       <div className="min-h-screen bg-black">
         <Sidebar />
-        <div className="lg:pl-72">
+        <div className="lg:pl-64">
           <Header />
           <main className="py-6 px-4 sm:px-6 lg:px-8">{children}</main>
         </div>
