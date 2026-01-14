@@ -48,20 +48,16 @@ export function Navbar() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden md:flex items-center gap-3">
-              <Link href="/sign-in">
-                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/5">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/sign-in">
-                <Button
-                  size="sm"
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
-                >
+            <div className="hidden md:flex items-center">
+              <Button
+                size="sm"
+                asChild
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
+              >
+                <Link href="/sign-in">
                   Get Started Free
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -104,16 +100,15 @@ export function Navbar() {
                 </motion.a>
               ))}
               <hr className="border-white/10 my-4" />
-              <Link href="/sign-in" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/5">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/sign-in" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+              <Button
+                asChild
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Link href="/sign-in">
                   Get Started Free
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </motion.div>
         )}

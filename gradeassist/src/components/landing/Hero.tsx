@@ -77,15 +77,16 @@ export function Hero() {
             transition={{ delay: 0.5, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
           >
-            <Link href="/sign-in">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/25 px-8 text-base glow-purple"
-              >
+            <Button
+              size="lg"
+              asChild
+              className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-xl shadow-indigo-500/25 px-8 text-base glow-purple"
+            >
+              <Link href="/sign-in">
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <Link href="#pricing">
               <Button
                 size="lg"

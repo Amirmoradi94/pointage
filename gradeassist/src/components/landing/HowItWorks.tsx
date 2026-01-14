@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Upload, Settings, Sparkles, CheckCircle2 } from "lucide-react";
 
@@ -145,7 +146,7 @@ export function HowItWorks() {
           <p className="text-gray-400 mb-6 text-lg">
             Ready to save hours every week?
           </p>
-          <a
+          <Link
             href="/sign-in"
             className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 transition-all text-lg"
           >
@@ -153,7 +154,7 @@ export function HowItWorks() {
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-          </a>
+          </Link>
           <p className="text-sm text-gray-500 mt-4">
             No credit card required • Start grading in minutes
           </p>

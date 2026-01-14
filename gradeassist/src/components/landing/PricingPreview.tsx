@@ -319,17 +319,18 @@ export function PricingPreview() {
                 </ul>
 
                 {/* CTA */}
-                <Link href="/sign-in">
-                  <Button
-                    className={`w-full ${
-                      plan.popular
-                        ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
-                        : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-                    }`}
-                  >
+                <Button
+                  asChild
+                  className={`w-full ${
+                    plan.popular
+                      ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
+                      : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                  }`}
+                >
+                  <Link href="/sign-in">
                     {plan.cta}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </motion.div>
           ))}

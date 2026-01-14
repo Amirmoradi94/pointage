@@ -62,7 +62,7 @@ export default function CoursePage() {
   if (courseLoading || assignmentsLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading course...</div>
+        <div className="text-gray-400">Loading course...</div>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function CoursePage() {
   if (!course) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Course not found</div>
+        <div className="text-gray-400">Course not found</div>
       </div>
     );
   }
@@ -80,20 +80,20 @@ export default function CoursePage() {
       AssignmentStatus,
       { label: string; className: string }
     > = {
-      DRAFT: { label: "Draft", className: "bg-gray-100 text-gray-800" },
-      ACTIVE: { label: "Active", className: "bg-green-100 text-green-800" },
-      GRADING: { label: "Grading", className: "bg-blue-100 text-blue-800" },
-      REVIEW: { label: "In Review", className: "bg-orange-100 text-orange-800" },
+      DRAFT: { label: "Draft", className: "bg-gray-500/10 text-gray-400 border border-gray-500/30" },
+      ACTIVE: { label: "Active", className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" },
+      GRADING: { label: "Grading", className: "bg-blue-500/10 text-blue-400 border border-blue-500/30" },
+      REVIEW: { label: "In Review", className: "bg-orange-500/10 text-orange-400 border border-orange-500/30" },
       COMPLETED: {
         label: "Completed",
-        className: "bg-purple-100 text-purple-800",
+        className: "bg-purple-500/10 text-purple-400 border border-purple-500/30",
       },
-      ARCHIVED: { label: "Archived", className: "bg-gray-100 text-gray-600" },
+      ARCHIVED: { label: "Archived", className: "bg-gray-500/10 text-gray-500 border border-gray-500/30" },
     };
 
     const variant = variants[status];
     return (
-      <Badge className={variant.className} variant="secondary">
+      <Badge className={variant.className}>
         {variant.label}
       </Badge>
     );
@@ -103,23 +103,23 @@ export default function CoursePage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link href="/courses">
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="border-gray-800 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold text-white">
               {course.code}
             </h1>
-            <Badge variant="outline">
+            <Badge className="bg-white/5 text-gray-400 border-gray-800">
               {course.semester} {course.year}
             </Badge>
           </div>
-          <p className="mt-1 text-sm text-gray-600">{course.name}</p>
+          <p className="mt-1 text-sm text-gray-400">{course.name}</p>
         </div>
         <Link href={`/courses/${courseId}/assignments/new`}>
-          <Button>
+          <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
             <Plus className="mr-2 h-4 w-4" />
             New Assignment
           </Button>
@@ -127,20 +127,20 @@ export default function CoursePage() {
       </div>
 
       {course.description && (
-        <Card>
+        <Card className="dark-card">
           <CardHeader>
-            <CardTitle>Course Description</CardTitle>
+            <CardTitle className="text-white">Course Description</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">{course.description}</p>
+            <p className="text-sm text-gray-400">{course.description}</p>
           </CardContent>
         </Card>
       )}
 
-      <Card>
+      <Card className="dark-card">
         <CardHeader>
-          <CardTitle>Assignments</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Assignments</CardTitle>
+          <CardDescription className="text-gray-400">
             Manage assignments and view grading progress
           </CardDescription>
         </CardHeader>
@@ -150,15 +150,15 @@ export default function CoursePage() {
               assignments.map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50"
+                  className="flex items-center justify-between rounded-lg border border-gray-800 bg-white/5 p-4 transition hover:bg-white/10"
                 >
                   <div className="flex items-center gap-3 flex-1">
-                    <FileText className="h-5 w-5 text-gray-500 flex-shrink-0" />
+                    <FileText className="h-5 w-5 text-indigo-400 flex-shrink-0" />
                     <div className="min-w-0 flex-1">
                       <Link
                         href={`/courses/${courseId}/assignments/${assignment.id}`}
                       >
-                        <p className="text-sm font-medium text-gray-900 hover:text-blue-600 transition">
+                        <p className="text-sm font-medium text-white hover:text-indigo-400 transition">
                           {assignment.title}
                         </p>
                       </Link>
@@ -187,14 +187,14 @@ export default function CoursePage() {
                       <Link
                         href={`/courses/${courseId}/assignments/${assignment.id}`}
                       >
-                        <Button size="sm" variant="outline" title="View Details">
+                        <Button size="sm" variant="outline" title="View Details" className="border-gray-800 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </Link>
                       <Link
                         href={`/courses/${courseId}/assignments/${assignment.id}/upload`}
                       >
-                        <Button size="sm" variant="outline" title="Upload Submissions">
+                        <Button size="sm" variant="outline" title="Upload Submissions" className="border-gray-800 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white">
                           <Upload className="h-4 w-4" />
                         </Button>
                       </Link>
@@ -202,6 +202,7 @@ export default function CoursePage() {
                         size="sm"
                         variant="ghost"
                         title="Delete Assignment"
+                        className="text-gray-400 hover:text-red-400 hover:bg-red-500/10"
                         onClick={() => {
                           if (
                             confirm(
@@ -212,23 +213,23 @@ export default function CoursePage() {
                           }
                         }}
                       >
-                        <Trash2 className="h-4 w-4 text-red-600" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="rounded-lg border border-dashed border-gray-200 p-8 text-center">
-                <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-4 text-sm font-medium text-gray-900">
+              <div className="rounded-lg border border-dashed border-gray-800 bg-white/5 p-8 text-center">
+                <FileText className="mx-auto h-12 w-12 text-gray-600" />
+                <p className="mt-4 text-sm font-medium text-white">
                   No assignments yet
                 </p>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-400">
                   Create your first assignment to get started
                 </p>
                 <Link href={`/courses/${courseId}/assignments/new`}>
-                  <Button className="mt-4">
+                  <Button className="mt-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Assignment
                   </Button>
