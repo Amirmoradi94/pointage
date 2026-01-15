@@ -26,8 +26,8 @@ const faqs = [
     answer: "We'll notify you when you're approaching limits. You can upgrade or add more capacity without losing any data.",
   },
   {
-    question: "Is there a free trial?",
-    answer: "Yes! All plans include a 14-day free trial with full access to features. No credit card required to start.",
+    question: "Is there a free plan?",
+    answer: "Yes! We offer a Free plan with 50 submissions per semester. No credit card required to get started.",
   },
   {
     question: "Do you offer student discounts?",
@@ -59,9 +59,9 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-landing-gradient">
+    <div className="min-h-screen bg-dark">
       <Navbar />
-      
+
       <main className="pt-24 pb-16">
         {/* Header */}
         <section className="py-16">
@@ -71,27 +71,27 @@ export default function PricingPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <Link href={isUpgradePage ? "/dashboard" : "/"} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6">
+              <Link href={isUpgradePage ? "/dashboard" : "/"} className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-300 mb-6">
                 <ArrowLeft className="h-4 w-4" />
                 {isUpgradePage ? "Back to Dashboard" : "Back to Home"}
               </Link>
-              <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
                 {isUpgradePage ? (
                   <>
                     {getUpgradeTitle()}
-                    <span className="text-gradient-brand"> - Upgrade Now</span>
+                    <span className="text-gradient-purple"> - Upgrade Now</span>
                   </>
                 ) : (
                   <>
                     Simple, transparent{" "}
-                    <span className="text-gradient-brand">pricing</span>
+                    <span className="text-gradient-purple">pricing</span>
                   </>
                 )}
               </h1>
-              <p className="text-lg text-slate-600">
-                {isUpgradePage 
+              <p className="text-lg text-gray-400">
+                {isUpgradePage
                   ? "Choose a higher plan to unlock more features and capacity."
-                  : "Choose a plan that fits your teaching load. All plans include a free trial."
+                  : "Choose a plan that fits your teaching load. Start with our Free plan."
                 }
               </p>
             </motion.div>
@@ -106,7 +106,7 @@ export default function PricingPage() {
         </section>
 
         {/* Custom Package Builder */}
-        <section className="py-16 bg-white">
+        <section className="py-16">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -114,13 +114,13 @@ export default function PricingPage() {
               viewport={{ once: true }}
               className="text-center max-w-2xl mx-auto mb-12"
             >
-              <span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-violet-100 text-violet-700 mb-4">
+              <span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-violet-500/10 text-violet-400 border border-violet-500/30 mb-4">
                 Custom Plans
               </span>
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
                 Build your own package
               </h2>
-              <p className="text-slate-600">
+              <p className="text-gray-400">
                 Need something different? Configure exactly what you need and see your price in real-time.
               </p>
             </motion.div>
@@ -140,10 +140,10 @@ export default function PricingPage() {
               viewport={{ once: true }}
               className="text-center max-w-2xl mx-auto mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
                 Compare plans
               </h2>
-              <p className="text-slate-600">
+              <p className="text-gray-400">
                 See everything that's included in each plan.
               </p>
             </motion.div>
@@ -153,7 +153,7 @@ export default function PricingPage() {
         </section>
 
         {/* FAQ */}
-        <section className="py-16 bg-white">
+        <section className="py-16">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -161,7 +161,7 @@ export default function PricingPage() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
                 Pricing FAQ
               </h2>
             </motion.div>
@@ -174,13 +174,13 @@ export default function PricingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className="group glass-card rounded-xl"
+                  className="group dark-card rounded-xl"
                 >
                   <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                    <span className="font-medium text-slate-900">{faq.question}</span>
+                    <span className="font-medium text-white">{faq.question}</span>
                     <span className="ml-4 flex-shrink-0">
                       <svg
-                        className="h-5 w-5 text-slate-500 group-open:rotate-180 transition-transform"
+                        className="h-5 w-5 text-gray-400 group-open:rotate-180 transition-transform"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -190,7 +190,7 @@ export default function PricingPage() {
                     </span>
                   </summary>
                   <div className="px-6 pb-6 pt-0">
-                    <p className="text-slate-600">{faq.answer}</p>
+                    <p className="text-gray-400">{faq.answer}</p>
                   </div>
                 </motion.details>
               ))}
@@ -205,25 +205,25 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-2xl p-12 text-center"
+              className="dark-card rounded-2xl p-12 text-center"
             >
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl font-bold text-white mb-4">
                 Ready to save hours every week?
               </h2>
-              <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
                 Join hundreds of TAs who've reclaimed their weekends with Pointage.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/sign-up">
                   <Button
                     size="lg"
-                    className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/25 px-8"
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25 px-8"
                   >
-                    Start Free Trial
+                    Get Started Free
                   </Button>
                 </Link>
                 <Link href="/#features">
-                  <Button size="lg" variant="outline">
+                  <Button size="lg" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-900 hover:text-white">
                     Learn More
                   </Button>
                 </Link>

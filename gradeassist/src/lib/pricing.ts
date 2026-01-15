@@ -50,7 +50,7 @@ export const PRESET_PLANS = [
   {
     id: "standard",
     name: "Standard",
-    price: 49,
+    price: 31.96,
     courses: 1,
     students: 100,
     assignments: 15,
@@ -60,7 +60,7 @@ export const PRESET_PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: 79,
+    price: 59.96,
     courses: 3,
     students: 999, // "Unlimited" represented as high number
     assignments: 999,

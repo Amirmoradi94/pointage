@@ -48,8 +48,8 @@ async function main() {
       hasPrioritySupport: true,
       hasAdvancedGrading: true,
       hasRubricCustomization: true,
-      pricePerSemester: 49,
-      pricePerMonth: 15,
+      pricePerSemester: 31.96,
+      pricePerMonth: 7.99,
       isActive: true,
     },
     {
@@ -63,8 +63,8 @@ async function main() {
       hasPrioritySupport: true,
       hasAdvancedGrading: true,
       hasRubricCustomization: true,
-      pricePerSemester: 79,
-      pricePerMonth: 25,
+      pricePerSemester: 59.96,
+      pricePerMonth: 14.99,
       isActive: true,
     },
   ];

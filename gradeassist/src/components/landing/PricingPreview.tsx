@@ -12,11 +12,12 @@ const plans = [
     pricePerSemester: 0,
     period: "forever",
     description: "Try Pointage risk-free",
+    submissions: "50",
     features: [
-      "1 course",
-      "40 students",
-      "1 assignment",
-      "Basic AI grading",
+      "50 submissions/semester",
+      "1 team member",
+      "AI-powered grading",
+      "Export to CSV",
       "Email support",
     ],
     cta: "Get Started",
@@ -24,32 +25,32 @@ const plans = [
   },
   {
     name: "Standard",
-    pricePerSemester: 49,
+    pricePerSemester: 32,
     period: "semester",
     description: "Most popular for TAs",
+    submissions: "1,500",
     features: [
-      "1 course",
-      "100 students",
-      "15 assignments",
-      "Advanced rubric customization",
-      "Priority support",
+      "1,500 submissions/semester",
+      "1 team member",
+      "Rubric customization",
       "Export to CSV",
+      "Priority email support",
     ],
     cta: "Start Free",
     popular: true,
   },
   {
     name: "Pro",
-    pricePerSemester: 79,
+    pricePerSemester: 60,
     period: "semester",
     description: "For full-time TAs",
+    submissions: "Unlimited",
     features: [
-      "3 courses",
-      "Unlimited students",
-      "Unlimited assignments",
-      "Team collaboration (3 TAs)",
-      "Priority support",
+      "Unlimited submissions",
+      "Up to 5 team members",
+      "Rubric customization",
       "Export to CSV",
+      "Priority email support",
     ],
     cta: "Start Free",
     popular: false,
@@ -69,7 +70,7 @@ const comparisonData = [
   },
   {
     name: "Pointage",
-    price: "$49/sem",
+    price: "$8/mo",
     timePerStudent: "30 sec",
     totalTime: "50 minutes",
     accuracy: "98%+",
@@ -286,7 +287,7 @@ export function PricingPreview() {
                               ${Math.round(plan.pricePerSemester / 4)}.00
                             </span>
                             <span className="text-5xl font-bold text-white">
-                              ${(plan.pricePerSemester * 0.6 / 4).toFixed(2)}
+                              ${Math.round(plan.pricePerSemester / 4)}
                             </span>
                             <span className="text-gray-400">/month</span>
                           </>
@@ -301,7 +302,7 @@ export function PricingPreview() {
                       </div>
                       {billingPeriod === "semester" && (
                         <p className="text-sm text-gray-500">
-                          Billed per semester (${(plan.pricePerSemester * 0.6).toFixed(2)})
+                          Billed per semester (${plan.pricePerSemester})
                         </p>
                       )}
                     </>

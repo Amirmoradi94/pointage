@@ -11,54 +11,37 @@ const plans = [
   {
     name: "Free",
     planType: PlanType.FREE,
-    description: "Free forever - try Pointage",
+    description: "Try Pointage risk-free",
     monthlyPrice: 0,
     semesterPrice: 0,
+    originalMonthlyPrice: 0,
+    submissions: "50",
     features: [
-      { text: "1 course", included: true },
-      { text: "40 students", included: true },
-      { text: "1 assignment", included: true },
-      { text: "Basic AI grading", included: true },
-      { text: "Email support", included: true },
+      { text: "50 submissions/semester", included: true },
+      { text: "1 team member", included: true },
+      { text: "AI-powered grading", included: true },
       { text: "Export to CSV", included: true },
-      { text: "Priority support", included: false },
+      { text: "Email support", included: true },
     ],
     popular: false,
     cta: "Get Started",
     isFree: true,
   },
   {
-    name: "Starter",
-    planType: PlanType.STARTER,
-    description: "Perfect for small tutorials",
-    monthlyPrice: 9,
-    semesterPrice: 29,
-    features: [
-      { text: "1 course", included: true },
-      { text: "30 students", included: true },
-      { text: "8 assignments", included: true },
-      { text: "Basic AI grading", included: true },
-      { text: "Email support", included: true },
-      { text: "Export to CSV", included: true },
-      { text: "Priority support", included: false },
-    ],
-    popular: false,
-    cta: "Start Free",
-  },
-  {
     name: "Standard",
     planType: PlanType.STANDARD,
     description: "Most popular for TAs",
-    monthlyPrice: 15,
-    semesterPrice: 49,
+    monthlyPrice: 8,
+    semesterPrice: 32,
+    originalMonthlyPrice: 13,
+    submissions: "1,500",
     features: [
-      { text: "1 course", included: true },
-      { text: "100 students", included: true },
-      { text: "15 assignments", included: true },
-      { text: "Advanced AI grading", included: true },
+      { text: "1,500 submissions/semester", included: true },
+      { text: "1 team member", included: true },
+      { text: "AI-powered grading", included: true },
       { text: "Rubric customization", included: true },
       { text: "Export to CSV", included: true },
-      { text: "Priority support", included: true },
+      { text: "Priority email support", included: true },
     ],
     popular: true,
     cta: "Start Free",
@@ -67,16 +50,17 @@ const plans = [
     name: "Pro",
     planType: PlanType.PRO,
     description: "For full-time TAs & instructors",
-    monthlyPrice: 25,
-    semesterPrice: 79,
+    monthlyPrice: 15,
+    semesterPrice: 60,
+    originalMonthlyPrice: 25,
+    submissions: "Unlimited",
     features: [
-      { text: "3 courses", included: true },
-      { text: "Unlimited students", included: true },
-      { text: "Unlimited assignments", included: true },
-      { text: "Advanced AI grading", included: true },
-      { text: "Team collaboration (3 TAs)", included: true },
+      { text: "Unlimited submissions", included: true },
+      { text: "Up to 5 team members", included: true },
+      { text: "AI-powered grading", included: true },
+      { text: "Rubric customization", included: true },
       { text: "Export to CSV", included: true },
-      { text: "Priority support", included: true },
+      { text: "Priority email support", included: true },
     ],
     popular: false,
     cta: "Start Free",
@@ -113,26 +97,32 @@ export function PricingCards({ upgradeFrom }: PricingCardsProps) {
   return (
     <div>
       {/* Billing Toggle */}
-      <div className="flex items-center justify-center gap-4 mb-12">
-        <span className={`text-sm font-medium ${!isAnnual ? 'text-slate-900' : 'text-slate-400'}`}>
-          Monthly
-        </span>
-        <button
-          onClick={() => setIsAnnual(!isAnnual)}
-          className="relative w-14 h-7 rounded-full bg-slate-200 transition-colors"
-        >
-          <motion.div
-            animate={{ x: isAnnual ? 28 : 4 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            className="absolute top-1 w-5 h-5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg"
-          />
-        </button>
-        <span className={`text-sm font-medium ${isAnnual ? 'text-slate-900' : 'text-slate-400'}`}>
-          Semester
-          <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">
-            Save 35%
-          </span>
-        </span>
+      <div className="flex justify-center mb-12">
+        <div className="dark-card rounded-full p-1 inline-flex relative">
+          <button
+            onClick={() => setIsAnnual(false)}
+            className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${
+              !isAnnual
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setIsAnnual(true)}
+            className={`relative px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${
+              isAnnual
+                ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <span className="absolute -top-6 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold whitespace-nowrap">
+              40% OFF
+            </span>
+            Semester
+          </button>
+        </div>
       </div>
 
       {/* Cards */}
@@ -145,15 +135,15 @@ export function PricingCards({ upgradeFrom }: PricingCardsProps) {
             transition={{ delay: index * 0.1 }}
             className={`relative rounded-2xl ${
               plan.popular
-                ? "glass-card border-2 border-indigo-200 shadow-xl shadow-indigo-500/10"
-                : "glass-card"
+                ? "dark-card border-2 border-purple-500 shadow-xl shadow-purple-500/30"
+                : "dark-card"
             }`}
           >
             {/* Popular Badge */}
             {plan.popular && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-sm font-medium shadow-lg">
-                  <Sparkles className="h-4 w-4" />
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium shadow-xl">
+                  <Sparkles className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   Most Popular
                 </span>
               </div>
@@ -162,40 +152,63 @@ export function PricingCards({ upgradeFrom }: PricingCardsProps) {
             <div className="p-8">
               {/* Header */}
               <div className="text-center mb-6">
-                <h3 className="text-xl font-semibold text-slate-900 mb-1">
+                <h3 className="text-2xl font-bold text-white mb-2">
                   {plan.name}
                 </h3>
-                <p className="text-sm text-slate-500">{plan.description}</p>
+                <p className="text-sm text-gray-400">{plan.description}</p>
               </div>
 
               {/* Price */}
               <div className="text-center mb-8">
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-5xl font-bold text-slate-900">
-                    ${isAnnual ? plan.semesterPrice : plan.monthlyPrice}
-                  </span>
-                  <span className="text-slate-500">
-                    /{isAnnual ? "semester" : "month"}
-                  </span>
-                </div>
-                {isAnnual && (
-                  <p className="text-sm text-slate-400 mt-1">
-                    ~${Math.round(plan.semesterPrice / 4)}/month
-                  </p>
+                {plan.name === "Free" ? (
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-5xl font-bold text-white">
+                      $0
+                    </span>
+                    <span className="text-gray-400">/forever</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-baseline justify-center gap-2 mb-2">
+                      {isAnnual ? (
+                        <>
+                          <span className="text-xl font-bold text-gray-500 line-through">
+                            ${plan.originalMonthlyPrice}.00
+                          </span>
+                          <span className="text-5xl font-bold text-white">
+                            ${plan.monthlyPrice}
+                          </span>
+                          <span className="text-gray-400">/month</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-5xl font-bold text-white">
+                            ${plan.monthlyPrice}
+                          </span>
+                          <span className="text-gray-400">/month</span>
+                        </>
+                      )}
+                    </div>
+                    {isAnnual && (
+                      <p className="text-sm text-gray-500">
+                        Billed per semester (${plan.semesterPrice})
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
 
               {/* Features */}
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-4 mb-8">
                 {plan.features.map((feature) => (
                   <li key={feature.text} className="flex items-start gap-3">
-                    <Check 
+                    <Check
                       className={`h-5 w-5 flex-shrink-0 mt-0.5 ${
-                        feature.included ? 'text-emerald-500' : 'text-slate-300'
-                      }`} 
+                        feature.included ? 'text-emerald-400' : 'text-gray-600'
+                      }`}
                     />
                     <span className={`text-sm ${
-                      feature.included ? 'text-slate-600' : 'text-slate-400'
+                      feature.included ? 'text-gray-300' : 'text-gray-500'
                     }`}>
                       {feature.text}
                     </span>
@@ -204,17 +217,18 @@ export function PricingCards({ upgradeFrom }: PricingCardsProps) {
               </ul>
 
               {/* CTA */}
-              <Link href="/sign-up">
-                <Button
-                  className={`w-full ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-500/25"
-                      : "bg-slate-900 hover:bg-slate-800 text-white"
-                  }`}
-                >
+              <Button
+                asChild
+                className={`w-full ${
+                  plan.popular
+                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/25"
+                    : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                }`}
+              >
+                <Link href="/sign-up">
                   {plan.cta}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </motion.div>
         ))}

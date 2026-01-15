@@ -1,6 +1,8 @@
 import { BatchStatus, SubmissionStatus } from "@prisma/client";
 import { z } from "zod";
 import { protectedProcedure, router } from "@/server/api/trpc";
+import { canUploadSubmissions } from "@/lib/plan-limits";
+import { TRPCError } from "@trpc/server";
 
 export const batchRouter = router({
   list: protectedProcedure
@@ -46,6 +48,20 @@ export const batchRouter = router({
 
       if (!user) {
         throw new Error("User not found in database. Please sign out and sign in again.");
+      }
+
+      // Check if user can upload these submissions
+      const canUpload = await canUploadSubmissions(
+        user.id,
+        input.assignmentId,
+        input.totalSubmissions
+      );
+
+      if (!canUpload.allowed) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: canUpload.reason ?? "You have reached your submission limit.",
+        });
       }
 
       return ctx.db.batch.create({

@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "How does pricing work?",
     answer:
-      "We offer a free forever plan (1 course, 40 students, 1 assignment) and paid plans starting at $49/semester. You only pay for what you need - no hidden fees, no per-submission charges. Cancel anytime.",
+      "We offer a free forever plan (1 course, 40 students, 1 assignment) and paid plans starting at $31.96/semester. You only pay for what you need - no hidden fees, no per-submission charges. Cancel anytime.",
   },
   {
     question: "Can I customize the AI's grading style?",

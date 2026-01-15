@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Upload, Settings, Sparkles, CheckCircle2 } from "lucide-react";
+import { Upload, Settings, Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 
 const steps = [
   {
@@ -93,43 +93,54 @@ export function HowItWorks() {
 
         {/* Steps */}
         <div className="relative">
-          {/* Connection Line */}
-          <div className="absolute top-16 left-[5%] right-[5%] h-0.5 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-emerald-500/20 hidden lg:block" />
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+          <div className="flex items-start justify-between">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const colors = colorClasses[step.color];
-              
+              const isLastStep = index === steps.length - 1;
+
               return (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  className="relative"
-                >
-                  {/* Step Number Circle */}
-                  <div className="flex justify-center mb-6">
-                    <div className={`relative w-16 h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center shadow-xl ${colors.glow}`}>
-                      <Icon className={`h-8 w-8 ${colors.icon}`} />
-                      <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                        {step.number}
+                <div key={step.title} className="flex items-start flex-1">
+                  <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    className="relative flex-1"
+                  >
+                    {/* Step Icon */}
+                    <div className="flex justify-center mb-6">
+                      <div className={`relative w-16 h-16 rounded-full ${colors.bg} border ${colors.border} flex items-center justify-center shadow-xl ${colors.glow}`}>
+                        <Icon className={`h-8 w-8 ${colors.icon}`} />
                       </div>
                     </div>
-                  </div>
 
-                  {/* Content */}
-                  <div className="text-center">
-                    <h3 className="text-xl font-semibold text-white mb-3">
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                      {step.description}
-                    </p>
-                  </div>
-                </motion.div>
+                    {/* Content */}
+                    <div className="text-center px-4">
+                      <h3 className="text-xl font-semibold text-white mb-3">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm text-gray-400 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Arrow between steps */}
+                  {!isLastStep && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.2 + 0.3 }}
+                      className="hidden lg:flex items-center justify-center pt-8 px-4"
+                    >
+                      <div className="relative">
+                        <ArrowRight className="h-10 w-10 text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" strokeWidth={2.5} />
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
               );
             })}
           </div>

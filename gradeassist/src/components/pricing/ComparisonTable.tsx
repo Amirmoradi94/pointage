@@ -7,33 +7,32 @@ const features = [
   {
     category: "Usage Limits",
     items: [
-      { name: "Courses", free: "1", starter: "1", standard: "1", pro: "3", custom: "1-10" },
-      { name: "Students per Course", free: "40", starter: "30", standard: "100", pro: "Unlimited", custom: "10-500" },
-      { name: "Assignments per Course", free: "1", starter: "8", standard: "15", pro: "Unlimited", custom: "5-30" },
-      { name: "Team Members", free: "1", starter: "1", standard: "1", pro: "3", custom: "1-10" },
+      { name: "Submissions per Semester", free: "50", standard: "1,500", pro: "Unlimited", custom: "100-5,000" },
+      { name: "Team Members", free: "1", standard: "1", pro: "Up to 5", custom: "1-10" },
     ],
   },
   {
     category: "AI Features",
     items: [
-      { name: "AI Grading", free: "Basic", starter: "Basic", standard: "Advanced", pro: "Advanced", custom: "Advanced" },
-      { name: "Rubric Customization", free: false, starter: false, standard: true, pro: true, custom: true },
-      { name: "Custom Grading Instructions", free: false, starter: false, standard: true, pro: true, custom: true },
-      { name: "Confidence Scoring", free: true, starter: true, standard: true, pro: true, custom: true },
+      { name: "AI-Powered Grading", free: true, standard: true, pro: true, custom: true },
+      { name: "Rubric Customization", free: false, standard: true, pro: true, custom: true },
+      { name: "Custom Grading Instructions", free: false, standard: true, pro: true, custom: true },
+      { name: "Confidence Scoring", free: true, standard: true, pro: true, custom: true },
     ],
   },
   {
-    category: "Export",
+    category: "Export & Integration",
     items: [
-      { name: "Export to CSV", free: true, starter: true, standard: true, pro: true, custom: true },
+      { name: "Export to CSV", free: true, standard: true, pro: true, custom: true },
+      { name: "Bulk Upload", free: true, standard: true, pro: true, custom: true },
     ],
   },
   {
     category: "Support",
     items: [
-      { name: "Email Support", free: true, starter: true, standard: true, pro: true, custom: true },
-      { name: "Priority Support", free: false, starter: false, standard: true, pro: true, custom: "Optional" },
-      { name: "Response Time", free: "72hr", starter: "48hr", standard: "24hr", pro: "12hr", custom: "24hr" },
+      { name: "Email Support", free: true, standard: true, pro: true, custom: true },
+      { name: "Priority Support", free: false, standard: true, pro: true, custom: true },
+      { name: "Response Time", free: "72hr", standard: "24hr", pro: "12hr", custom: "24hr" },
     ],
   },
 ];
@@ -41,12 +40,12 @@ const features = [
 function CellValue({ value }: { value: boolean | string }) {
   if (typeof value === "boolean") {
     return value ? (
-      <Check className="h-5 w-5 text-emerald-500 mx-auto" />
+      <Check className="h-5 w-5 text-emerald-400 mx-auto" />
     ) : (
-      <X className="h-5 w-5 text-slate-300 mx-auto" />
+      <X className="h-5 w-5 text-gray-600 mx-auto" />
     );
   }
-  return <span className="text-sm text-slate-600">{value}</span>;
+  return <span className="text-sm text-gray-300">{value}</span>;
 }
 
 export function ComparisonTable() {
@@ -55,32 +54,28 @@ export function ComparisonTable() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-2xl overflow-hidden min-w-[800px]"
+        className="dark-card rounded-2xl overflow-hidden min-w-[700px]"
       >
         {/* Header */}
-        <div className="grid grid-cols-6 bg-slate-50/50">
+        <div className="grid grid-cols-5 bg-gray-900/50">
           <div className="p-6 text-left">
-            <span className="text-sm font-semibold text-slate-900">Features</span>
+            <span className="text-sm font-semibold text-white">Features</span>
           </div>
-          <div className="p-6 text-center border-l border-slate-100 bg-emerald-50/50">
-            <span className="text-sm font-semibold text-emerald-900">Free</span>
-            <p className="text-xs text-emerald-600 mt-1">$0 forever</p>
+          <div className="p-6 text-center border-l border-gray-800 bg-emerald-500/10">
+            <span className="text-sm font-semibold text-emerald-400">Free</span>
+            <p className="text-xs text-emerald-500 mt-1">$0 forever</p>
           </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-sm font-semibold text-slate-900">Starter</span>
-            <p className="text-xs text-slate-500 mt-1">$29/sem</p>
+          <div className="p-6 text-center border-l border-gray-800 bg-indigo-500/10">
+            <span className="text-sm font-semibold text-indigo-400">Standard</span>
+            <p className="text-xs text-indigo-500 mt-1">$8/mo</p>
           </div>
-          <div className="p-6 text-center border-l border-slate-100 bg-indigo-50/50">
-            <span className="text-sm font-semibold text-indigo-900">Standard</span>
-            <p className="text-xs text-indigo-600 mt-1">$49/sem</p>
+          <div className="p-6 text-center border-l border-gray-800">
+            <span className="text-sm font-semibold text-white">Pro</span>
+            <p className="text-xs text-gray-400 mt-1">$15/mo</p>
           </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-sm font-semibold text-slate-900">Pro</span>
-            <p className="text-xs text-slate-500 mt-1">$79/sem</p>
-          </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-sm font-semibold text-slate-900">Custom</span>
-            <p className="text-xs text-slate-500 mt-1">Dynamic</p>
+          <div className="p-6 text-center border-l border-gray-800">
+            <span className="text-sm font-semibold text-white">Custom</span>
+            <p className="text-xs text-gray-400 mt-1">Dynamic</p>
           </div>
         </div>
 
@@ -88,9 +83,9 @@ export function ComparisonTable() {
         {features.map((section) => (
           <div key={section.category}>
             {/* Category Header */}
-            <div className="grid grid-cols-6 bg-slate-50/30 border-t border-slate-100">
-              <div className="col-span-6 p-4 px-6">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <div className="grid grid-cols-5 bg-gray-900/30 border-t border-gray-800">
+              <div className="col-span-5 p-4 px-6">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   {section.category}
                 </span>
               </div>
@@ -98,23 +93,20 @@ export function ComparisonTable() {
 
             {/* Items */}
             {section.items.map((item) => (
-              <div key={item.name} className="grid grid-cols-6 border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+              <div key={item.name} className="grid grid-cols-5 border-t border-gray-800 hover:bg-gray-900/30 transition-colors">
                 <div className="p-4 px-6">
-                  <span className="text-sm text-slate-700">{item.name}</span>
+                  <span className="text-sm text-gray-300">{item.name}</span>
                 </div>
-                <div className="p-4 text-center border-l border-slate-100 bg-emerald-50/30">
+                <div className="p-4 text-center border-l border-gray-800 bg-emerald-500/5">
                   <CellValue value={item.free} />
                 </div>
-                <div className="p-4 text-center border-l border-slate-100">
-                  <CellValue value={item.starter} />
-                </div>
-                <div className="p-4 text-center border-l border-slate-100 bg-indigo-50/30">
+                <div className="p-4 text-center border-l border-gray-800 bg-indigo-500/5">
                   <CellValue value={item.standard} />
                 </div>
-                <div className="p-4 text-center border-l border-slate-100">
+                <div className="p-4 text-center border-l border-gray-800">
                   <CellValue value={item.pro} />
                 </div>
-                <div className="p-4 text-center border-l border-slate-100">
+                <div className="p-4 text-center border-l border-gray-800">
                   <CellValue value={item.custom} />
                 </div>
               </div>
@@ -123,29 +115,25 @@ export function ComparisonTable() {
         ))}
 
         {/* Price Row */}
-        <div className="grid grid-cols-6 border-t-2 border-slate-200 bg-slate-50/50">
+        <div className="grid grid-cols-5 border-t-2 border-gray-700 bg-gray-900/50">
           <div className="p-6">
-            <span className="text-sm font-semibold text-slate-900">Price</span>
+            <span className="text-sm font-semibold text-white">Price</span>
           </div>
-          <div className="p-6 text-center border-l border-slate-100 bg-emerald-50/50">
-            <span className="text-lg font-bold text-emerald-900">Free</span>
-            <span className="text-xs text-emerald-600"> forever</span>
+          <div className="p-6 text-center border-l border-gray-800 bg-emerald-500/10">
+            <span className="text-lg font-bold text-emerald-400">Free</span>
+            <span className="text-xs text-emerald-500"> forever</span>
           </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-lg font-bold text-slate-900">$29</span>
-            <span className="text-xs text-slate-500">/semester</span>
+          <div className="p-6 text-center border-l border-gray-800 bg-indigo-500/10">
+            <span className="text-lg font-bold text-indigo-400">$8</span>
+            <span className="text-xs text-indigo-500">/month</span>
           </div>
-          <div className="p-6 text-center border-l border-slate-100 bg-indigo-50/50">
-            <span className="text-lg font-bold text-indigo-900">$49</span>
-            <span className="text-xs text-indigo-600">/semester</span>
+          <div className="p-6 text-center border-l border-gray-800">
+            <span className="text-lg font-bold text-white">$15</span>
+            <span className="text-xs text-gray-400">/month</span>
           </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-lg font-bold text-slate-900">$79</span>
-            <span className="text-xs text-slate-500">/semester</span>
-          </div>
-          <div className="p-6 text-center border-l border-slate-100">
-            <span className="text-lg font-bold text-slate-900">Custom</span>
-            <span className="text-xs text-slate-500">/semester</span>
+          <div className="p-6 text-center border-l border-gray-800">
+            <span className="text-lg font-bold text-white">Custom</span>
+            <span className="text-xs text-gray-400">/month</span>
           </div>
         </div>
       </motion.div>

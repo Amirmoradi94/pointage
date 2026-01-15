@@ -146,4 +146,47 @@ export const subscriptionRouter = router({
       orderBy: { pricePerSemester: "asc" },
     });
   }),
+
+  // Get usage statistics
+  getUsage: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { clerkId: ctx.userId! },
+      include: {
+        subscription: true,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "User not found",
+      });
+    }
+
+    // Get the current period dates
+    const currentPeriodStart = user.subscription?.currentPeriodStart ?? new Date(0);
+    const currentPeriodEnd = user.subscription?.currentPeriodEnd ?? new Date("2099-12-31");
+
+    // Count submissions in the current billing period
+    const submissionsUsed = await ctx.db.submission.count({
+      where: {
+        assignment: {
+          createdById: user.id,
+        },
+        createdAt: {
+          gte: currentPeriodStart,
+          lte: currentPeriodEnd,
+        },
+        status: {
+          in: ["GRADED", "PENDING_GRADING", "GRADING"], // Only count submissions that have been or are being graded
+        },
+      },
+    });
+
+    return {
+      submissionsUsed,
+      currentPeriodStart,
+      currentPeriodEnd,
+    };
+  }),
 });

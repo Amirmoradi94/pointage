@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { api } from "@/lib/trpc/client";
 import { BatchStatus } from "@prisma/client";
+import { UsageTracking } from "@/components/dashboard/UsageTracking";
 
 export default function DashboardPage() {
   // Fetch recent batches
@@ -65,6 +66,9 @@ export default function DashboardPage() {
           a single dashboard.
         </p>
       </div>
+
+      {/* Usage Tracking */}
+      <UsageTracking />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard

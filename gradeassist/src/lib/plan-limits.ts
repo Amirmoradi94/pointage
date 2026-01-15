@@ -6,6 +6,7 @@ export interface PlanLimits {
   maxCourses: number | null;
   maxStudentsPerCourse: number | null;
   maxAssignmentsPerCourse: number | null;
+  maxSubmissionsPerSemester: number | null;
   maxTeamMembers: number;
   hasPrioritySupport: boolean;
   hasAdvancedGrading: boolean;
@@ -55,6 +56,7 @@ export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
       maxCourses: sub.maxCourses,
       maxStudentsPerCourse: sub.maxStudentsPerCourse,
       maxAssignmentsPerCourse: sub.maxAssignmentsPerCourse,
+      maxSubmissionsPerSemester: (sub as any).maxSubmissionsPerSemester ?? getPlanSubmissionLimit(sub.planType),
       maxTeamMembers: sub.maxTeamMembers ?? 1,
       hasPrioritySupport: sub.hasPrioritySupport,
       hasAdvancedGrading: sub.planType !== PlanType.STARTER && sub.planType !== PlanType.FREE,
@@ -74,11 +76,32 @@ export function getDefaultFreeLimits(): PlanLimits {
     maxCourses: 1,
     maxStudentsPerCourse: 40,
     maxAssignmentsPerCourse: 1,
+    maxSubmissionsPerSemester: 50,
     maxTeamMembers: 1,
     hasPrioritySupport: false,
     hasAdvancedGrading: false,
     hasRubricCustomization: false,
   };
+}
+
+/**
+ * Get submission limit for a plan type
+ */
+function getPlanSubmissionLimit(planType: PlanType): number | null {
+  switch (planType) {
+    case PlanType.FREE:
+      return 50;
+    case PlanType.STARTER:
+      return 500;
+    case PlanType.STANDARD:
+      return 1500;
+    case PlanType.PRO:
+      return null; // unlimited
+    case PlanType.CUSTOM:
+      return null; // set by subscription
+    default:
+      return 50;
+  }
 }
 
 /**
@@ -98,6 +121,7 @@ export async function getPlanLimitsByType(planType: PlanType): Promise<PlanLimit
     maxCourses: plan.maxCourses,
     maxStudentsPerCourse: plan.maxStudentsPerCourse,
     maxAssignmentsPerCourse: plan.maxAssignmentsPerCourse,
+    maxSubmissionsPerSemester: (plan as any).maxSubmissionsPerSemester ?? getPlanSubmissionLimit(planType),
     maxTeamMembers: plan.maxTeamMembers,
     hasPrioritySupport: plan.hasPrioritySupport,
     hasAdvancedGrading: plan.hasAdvancedGrading,
@@ -117,6 +141,7 @@ function getHardcodedPlanLimits(planType: PlanType): PlanLimits {
         maxCourses: 1,
         maxStudentsPerCourse: 30,
         maxAssignmentsPerCourse: 8,
+        maxSubmissionsPerSemester: 500,
         maxTeamMembers: 1,
         hasPrioritySupport: false,
         hasAdvancedGrading: false,
@@ -127,6 +152,7 @@ function getHardcodedPlanLimits(planType: PlanType): PlanLimits {
         maxCourses: 1,
         maxStudentsPerCourse: 100,
         maxAssignmentsPerCourse: 15,
+        maxSubmissionsPerSemester: 1500,
         maxTeamMembers: 1,
         hasPrioritySupport: true,
         hasAdvancedGrading: true,
@@ -137,7 +163,8 @@ function getHardcodedPlanLimits(planType: PlanType): PlanLimits {
         maxCourses: null, // unlimited
         maxStudentsPerCourse: null, // unlimited
         maxAssignmentsPerCourse: null, // unlimited
-        maxTeamMembers: 3,
+        maxSubmissionsPerSemester: null, // unlimited
+        maxTeamMembers: 5,
         hasPrioritySupport: true,
         hasAdvancedGrading: true,
         hasRubricCustomization: true,
@@ -262,7 +289,7 @@ export async function canCreateAssignment(
 }
 
 /**
- * Check if user can upload submissions (check student limit)
+ * Check if user can upload submissions (check submission limit)
  */
 export async function canUploadSubmissions(
   userId: string,
@@ -280,30 +307,109 @@ export async function canUploadSubmissions(
     return { allowed: false, reason: "Assignment not found" };
   }
 
-  const limits = await getUserPlanLimits(userId);
-  
-  if (limits.maxStudentsPerCourse === null) {
-    return { allowed: true };
-  }
-
-  // Count unique students in this assignment
-  const existingSubmissions = await db.submission.findMany({
-    where: { assignmentId },
-    select: { studentIdentifier: true },
+  // Get user with subscription to check billing period
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    include: {
+      subscription: true,
+    },
   });
 
-  const uniqueStudents = new Set(existingSubmissions.map((s) => s.studentIdentifier));
-  const newUniqueStudents = new Set<string>();
+  if (!user) {
+    return { allowed: false, reason: "User not found" };
+  }
 
-  // For new submissions, we'd need to check student identifiers
-  // For now, assume each submission is from a different student
-  const estimatedNewStudents = submissionCount;
-  const totalStudents = uniqueStudents.size + estimatedNewStudents;
+  const limits = await getUserPlanLimits(userId);
 
-  if (totalStudents > limits.maxStudentsPerCourse) {
+  // Check submission limit
+  if (limits.maxSubmissionsPerSemester === null) {
+    return { allowed: true }; // Unlimited
+  }
+
+  // Get current period dates
+  const currentPeriodStart = user.subscription?.currentPeriodStart ?? new Date(0);
+  const currentPeriodEnd = user.subscription?.currentPeriodEnd ?? new Date("2099-12-31");
+
+  // Count existing submissions in the current billing period
+  const existingCount = await db.submission.count({
+    where: {
+      assignment: {
+        createdById: userId,
+      },
+      createdAt: {
+        gte: currentPeriodStart,
+        lte: currentPeriodEnd,
+      },
+      status: {
+        in: ["GRADED", "PENDING_GRADING", "GRADING"],
+      },
+    },
+  });
+
+  const totalSubmissions = existingCount + submissionCount;
+
+  if (totalSubmissions > limits.maxSubmissionsPerSemester) {
     return {
       allowed: false,
-      reason: `This would exceed your plan limit of ${limits.maxStudentsPerCourse} students per course. Current: ${uniqueStudents.size}, Adding: ${estimatedNewStudents}.`,
+      reason: `This would exceed your plan limit of ${limits.maxSubmissionsPerSemester} submissions per semester. Current: ${existingCount}, Adding: ${submissionCount}. Upgrade your plan to add more submissions.`,
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Check if user can grade submissions (check submission limit)
+ */
+export async function canGradeSubmissions(
+  userId: string,
+  submissionCount: number = 1
+): Promise<{ allowed: boolean; reason?: string }> {
+  // Get user with subscription to check billing period
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    include: {
+      subscription: true,
+    },
+  });
+
+  if (!user) {
+    return { allowed: false, reason: "User not found" };
+  }
+
+  const limits = await getUserPlanLimits(userId);
+
+  // Check submission limit
+  if (limits.maxSubmissionsPerSemester === null) {
+    return { allowed: true }; // Unlimited
+  }
+
+  // Get current period dates
+  const currentPeriodStart = user.subscription?.currentPeriodStart ?? new Date(0);
+  const currentPeriodEnd = user.subscription?.currentPeriodEnd ?? new Date("2099-12-31");
+
+  // Count existing graded submissions in the current billing period
+  const existingCount = await db.submission.count({
+    where: {
+      assignment: {
+        createdById: userId,
+      },
+      createdAt: {
+        gte: currentPeriodStart,
+        lte: currentPeriodEnd,
+      },
+      status: {
+        in: ["GRADED", "PENDING_GRADING", "GRADING"],
+      },
+    },
+  });
+
+  const totalSubmissions = existingCount + submissionCount;
+
+  if (totalSubmissions > limits.maxSubmissionsPerSemester) {
+    return {
+      allowed: false,
+      reason: `This would exceed your plan limit of ${limits.maxSubmissionsPerSemester} submissions per semester. Current: ${existingCount}. Upgrade your plan to grade more submissions.`,
     };
   }
 
